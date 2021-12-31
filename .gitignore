@@ -1,0 +1,6 @@
+.idea/
+.vscode/
+DBF/*
+vendor/
+composer.lock
+!DBF/test.dbf

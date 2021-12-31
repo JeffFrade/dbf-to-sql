@@ -1,0 +1,33 @@
+version: '3'
+services:
+  php-fpm:
+    build: ./docker/php
+    image: jefffrade/php-dbf:php-fpm
+    restart: on-failure
+    container_name: jeffrade-php-dbf-php-fpm
+    command: php-fpm
+    volumes:
+      - .:/php-dbf
+    healthcheck:
+      test: ['CMD', 'sh', '-c', 'netstat -an | fgrep 9000 | fgrep -q LISTEN']
+      interval: 10s
+      timeout: 5s
+      retries: 2
+
+  nginx:
+    build: ./docker/nginx
+    image: jefffrade/php-dbf:nginx
+    restart: on-failure
+    container_name: jeffrade-php-dbf-nginx
+    command: nginx -g "daemon off;"
+    links:
+      - php-fpm
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/php-dbf
+    healthcheck:
+      test: ['CMD', 'sh', '-c', 'netstat -an | fgrep 80 | fgrep -q LISTEN']
+      interval: 10s
+      timeout: 5s
+      retries: 2
